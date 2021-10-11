@@ -5,6 +5,7 @@ import torchvision.transforms as transforms
 from torch.utils.data.sampler import SubsetRandomSampler
 
 train_dir = './train_images'
+extra_train_dir = './train_images_extra'
 test_dir = './test_images'
 
 transform = transforms.Compose(
@@ -13,6 +14,10 @@ transform = transforms.Compose(
      transforms.Normalize(mean=(0,), std=(1,))])
 
 train_data = torchvision.datasets.ImageFolder(train_dir, transform=transform)
+extra_train_data = torchvision.datasets.ImageFolder(
+    extra_train_dir, transform=transform)
+train_data = torch.utils.data.ConcatDataset([train_data, extra_train_data])
+
 test_data = torchvision.datasets.ImageFolder(test_dir, transform=transform)
 
 valid_size = 0.2
