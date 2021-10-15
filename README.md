@@ -17,7 +17,7 @@ python3 test.py
 ### Find faces on full images
 
 ```sh
-python3 face_finder2.py
+python3 face_finder.py
 ```
 
 ### Other datasets used
