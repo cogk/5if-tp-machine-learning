@@ -1,20 +1,9 @@
 import torch
 import torch.optim as optim
 import torch.nn as nn
+import numpy as np
 
 from load_data import train_loader
-
-import signal
-import time
-
-
-# class GracefulKiller:
-#     kill_now = False
-#     def __init__(self):
-#         signal.signal(signal.SIGINT, self.exit_gracefully)
-#         signal.signal(signal.SIGTERM, self.exit_gracefully)
-#     def exit_gracefully(self, *args):
-#         self.kill_now = True
 
 
 def load_train_save(net):
@@ -30,17 +19,15 @@ def load_train_save(net):
 
 def net_train(net, save_between_epochs=False):
     print('Starting Training')
-    n_epochs = 2
+    n_epochs = 10
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+    optimizer = optim.SGD(net.parameters(), lr=0.0007, momentum=0.9)
 
-    delta_losses = [0]
-    all_losses = []
-
+    last_epoch_loss = +999
     for epoch in range(0, n_epochs):
         print('Start of Epoch', epoch + 1, '/', n_epochs)
-        epoch_loss = 0.0
+        epoch_losses = []
         running_loss = 0.0
 
         for i, data in enumerate(train_loader, 0):
@@ -58,23 +45,22 @@ def net_train(net, save_between_epochs=False):
             # print statistics
             l = loss.item()
             running_loss += l
-            epoch_loss += l
 
             if i % 1000 == 999:  # print every 1000 mini-batches
                 print('[e=%d, i=%5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss / 2000))
+                      (epoch + 1, i + 1, running_loss / 1000))
+                epoch_losses.append(running_loss)
                 running_loss = 0.0
 
+        epoch_loss = np.mean(epoch_losses)
         print('End of Epoch %d: loss: %.3f' %
-              (epoch + 1, epoch_loss / 2000))
+              (epoch + 1, epoch_loss / 1000))
 
-        if epoch > 0:
-            delta_losses.append(all_losses[epoch - 1] - running_loss)
-        all_losses.append(running_loss)
-
-        if delta_losses[-1] > 0:
+        if last_epoch_loss < epoch_loss:
             print('/!\\ loss is increasing')
+            net.save_to_file('./increasing_loss_saved_model.dat')
             raise 'loss is increasing'
+        last_epoch_loss = epoch_loss
 
         if save_between_epochs and epoch < n_epochs - 1:
             net.save_to_file()

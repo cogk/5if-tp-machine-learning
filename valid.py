@@ -1,5 +1,5 @@
 import torch
-from load_data import test_loader
+from load_data import valid_loader
 from net import Net
 
 if __name__ == '__main__':
@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     print('Start')
     with torch.no_grad():
-        for data in test_loader:
+        for data in valid_loader:
             images, labels = data
             outputs = net(images)
             _, predicted = torch.max(outputs.data, 1)
@@ -23,5 +23,5 @@ if __name__ == '__main__':
                 error=correct/total
             ))
 
-    print('Accuracy of the network on the test images: %d %%' %
+    print('Accuracy of the network on the validation images: %d %%' %
           (100 * correct / total))
