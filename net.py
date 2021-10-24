@@ -6,21 +6,37 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 6, 5)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 6 * 6, 32)
-        self.fc2 = nn.Linear(32, 16)
-        self.fc3 = nn.Linear(16, 2)
-        self.dropout = nn.Dropout(p=0.4)
+
+        self.net1 = nn.Sequential(
+            nn.Conv2d(1, 6, kernel_size=5),
+            nn.PReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.BatchNorm2d(6),
+        )
+        self.net2 = nn.Sequential(
+            nn.Conv2d(6, 16, kernel_size=5),
+            nn.PReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.BatchNorm2d(16),
+        )
+        self.net3 = nn.Sequential(
+            nn.Linear(16 * 6 * 6, 144),
+            nn.Dropout(p=0.4),
+            nn.PReLU(),
+            nn.Linear(144, 32),
+            nn.Dropout(p=0.4),
+            nn.PReLU(),
+            nn.Linear(32, 16),
+            nn.Dropout(p=0.4),
+            nn.PReLU(),
+            nn.Linear(16, 2),
+        )
 
     def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
+        x = self.net1(x)
+        x = self.net2(x)
         x = x.view(-1, 16 * 6 * 6)
-        x = F.relu(self.dropout(self.fc1(x)))
-        x = F.relu(self.dropout(self.fc2(x)))
-        x = self.fc3(x)
+        x = self.net3(x)
         return x
 
     def save_to_file(self, path='./saved_model.dat'):
