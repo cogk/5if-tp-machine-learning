@@ -19,7 +19,7 @@ def load_train_save(net):
 
 def net_train(net, save_between_epochs=False):
     print('Starting Training')
-    n_epochs = 10
+    n_epochs = 40
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.0007, momentum=0.9)
@@ -33,12 +33,12 @@ def net_train(net, save_between_epochs=False):
         for i, data in enumerate(train_loader, 0):
             inputs, labels = data
 
-            # zero the parameter gradients
-            optimizer.zero_grad()
-
             # forward + backward + optimize
             outputs = net(inputs)
             loss = criterion(outputs, labels)
+
+            # zero the parameter gradients
+            optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 

@@ -5,7 +5,7 @@ import re
 import torch
 import PIL
 
-from face_finder_utils import generate_image_crops
+from ff_utils import generate_image_crops
 from net import Net
 
 if len(sys.argv) < 1:
