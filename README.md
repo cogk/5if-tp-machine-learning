@@ -5,7 +5,7 @@
 ### Train the network
 
 ```sh
-python3 net_train.py
+python3 train.py
 ```
 
 ### Evaluate the classifier
@@ -17,7 +17,7 @@ python3 test.py
 ### Find faces on full images
 
 ```sh
-python3 face_finder.py
+python3 face_finder.py input_image.jpg [output_image_path.png]
 ```
 
 ### Other datasets used
@@ -32,4 +32,4 @@ Download the _All images aligned with deep funneling_ dataset then convert it us
 
 -   [Kaggle Natural Images (with the Person class excluded)](https://www.kaggle.com/prasunroy/natural-images)
 
-Download the dataset, remove the `person` folder (or use it like the LFW dataset), then use the `nofaces.py` util to generate false-positive images.
+Download the dataset, remove the `person` folder (or use it like the LFW dataset), then use the `archives/nofaces.py` util to generate false-positive images.
